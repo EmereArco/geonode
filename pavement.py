@@ -232,10 +232,10 @@ def static(options):
 
 
 @task
-@needs([
-    'setup_geoserver',
-    'setup_qgis_server',
-])
+#@needs([
+#    'setup_geoserver',
+#    'setup_qgis_server',
+#])
 def setup(options):
     """Get dependencies and prepare a GeoNode development environment."""
 
@@ -395,8 +395,9 @@ def package(options):
 
 
 @task
-@needs(['start_geoserver',
-        'start_qgis_server',
+@needs([
+#'start_geoserver',
+#        'start_qgis_server',
         'start_django'])
 @cmdopts([
     ('bind=', 'b', 'Bind server to provided IP address and port number.'),
@@ -459,7 +460,7 @@ def stop_qgis_server():
 
 @task
 @needs([
-    'stop_geoserver',
+#    'stop_geoserver',
     'stop_qgis_server'
 ])
 def stop():

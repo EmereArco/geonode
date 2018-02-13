@@ -96,6 +96,10 @@ class Style(models.Model, PermissionLevelMixin):
                 self.name.encode('utf-8'))
             return None
 
+    class Meta:
+        ordering = ['sld_title', 'name']
+
+
     def get_self_resource(self):
         """Get associated resource base."""
         # Associate this model with resource

@@ -27,6 +27,7 @@ from datetime import timedelta
 from distutils.util import strtobool
 
 import dj_database_url
+import djcelery
 #
 # General Django development settings
 #
@@ -286,7 +287,7 @@ GEONODE_APPS = (
     'geonode.geoserver',
     'geonode.upload',
     'geonode.tasks',
-    'geonode.messaging',
+    #'geonode.messaging',
 
 )
 
@@ -303,13 +304,13 @@ GEONODE_CONTRIB_APPS = (
     # 'geonode.contrib.datastore_shards',
     'geonode.contrib.metadataxsl',
     'geonode.contrib.api_basemaps',
+    'geonode.contrib.risks',
 )
 
 # Uncomment the following line to enable contrib apps
 GEONODE_APPS = GEONODE_CONTRIB_APPS + GEONODE_APPS
 
 INSTALLED_APPS = (
-
     'modeltranslation',
 
     # Boostrap admin theme
@@ -344,14 +345,15 @@ INSTALLED_APPS = (
     'mptt',
     # 'modeltranslation',
     # 'djkombu',
-    # 'djcelery',
-    # 'kombu.transport.django',
+    'djcelery',
+    'kombu.transport.django',
 
     'storages',
     'floppyforms',
 
     # Theme
     "pinax_theme_bootstrap",
+    "pinax_theme_bootstrap_account",
     'django_forms_bootstrap',
 
     # Social
@@ -373,14 +375,14 @@ INSTALLED_APPS = (
     'invitations',
 ) + GEONODE_APPS
 
-MONITORING_ENABLED = False
+MONITORING_ENABLED = True
 
 # how long monitoring data should be stored
 MONITORING_DATA_TTL = timedelta(days=7)
 
 # this will disable csrf check for notification config views,
 # use with caution - for dev purpose only
-MONITORING_DISABLE_CSRF = False
+MONITORING_DISABLE_CSRF = True
 
 
 LOGGING = {
@@ -489,6 +491,8 @@ MIDDLEWARE_CLASSES = (
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
 )
 
+CORS_ORIGIN_WHITELIST = 'disasterisk-af-dev.geo-solutions.it disasterisk.af.geonode.org disasterisk.af'.split(' ')
+
 # Replacement of default authentication backend in order to support
 # permissions per object.
 AUTHENTICATION_BACKENDS = (
@@ -558,7 +562,9 @@ ACTSTREAM_SETTINGS = {
 
 
 # prevent signing up by default
-ACCOUNT_OPEN_SIGNUP = True
+
+REGISTRATION_OPEN = strtobool(os.getenv('REGISTRATION_OPEN', 'False'))
+
 
 ACCOUNT_EMAIL_CONFIRMATION_EMAIL = strtobool(
     os.getenv('ACCOUNT_EMAIL_CONFIRMATION_EMAIL', 'False')
@@ -594,7 +600,7 @@ NOSE_ARGS = [
 #
 # GeoNode specific settings
 #
-SITEURL = os.getenv('SITEURL', "http://localhost:8000/")
+SITEURL = os.getenv('SITEURL', "http://198.50.229.90:8000/")
 
 USE_QUEUE = strtobool(os.getenv('USE_QUEUE', 'False'))
 
@@ -755,7 +761,7 @@ PYCSW = {
 
 # default map projection
 # Note: If set to EPSG:4326, then only EPSG:4326 basemaps will work.
-DEFAULT_MAP_CRS = "EPSG:3857"
+DEFAULT_MAP_CRS = "EPSG:900913"
 
 # Where should newly created maps be focused?
 DEFAULT_MAP_CENTER = (0, 0)
@@ -939,10 +945,10 @@ AUTO_GENERATE_AVATAR_SIZES = (
 )
 
 # Number of results per page listed in the GeoNode search pages
-CLIENT_RESULTS_LIMIT = int(os.getenv('CLIENT_RESULTS_LIMIT', '20'))
+CLIENT_RESULTS_LIMIT = int(os.getenv('CLIENT_RESULTS_LIMIT', '100'))
 
 # Number of items returned by the apis 0 equals no limit
-API_LIMIT_PER_PAGE = int(os.getenv('API_LIMIT_PER_PAGE', '200'))
+API_LIMIT_PER_PAGE = int(os.getenv('API_LIMIT_PER_PAGE', '0'))
 API_INCLUDE_REGIONS_COUNT = strtobool(
     os.getenv('API_INCLUDE_REGIONS_COUNT', 'False'))
 
@@ -1157,7 +1163,7 @@ if S3_MEDIA_ENABLED:
     MEDIA_URL = "https://%s/%s/" % (AWS_S3_BUCKET_DOMAIN, MEDIAFILES_LOCATION)
 
 
-# djcelery.setup_loader()
+djcelery.setup_loader()
 
 # There are 3 ways to override GeoNode settings:
 # 1. Using environment variables, if your changes to GeoNode are minimal.

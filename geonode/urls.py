@@ -171,6 +171,10 @@ if "djmp" in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
                             (r'^djmp/', include('djmp.urls')),
                             )
+if 'geonode.contrib.risks' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('', 
+                            (r'^risk/', include('geonode.contrib.risks.urls', namespace='risks')),
+                            )
 
 if 'geonode.contrib.ows_api' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',

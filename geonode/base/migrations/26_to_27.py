@@ -27,6 +27,7 @@ class Migration(migrations.Migration):
             name='alternate',
             field=models.CharField(max_length=128, null=True, blank=True),
         ),
+'''
         migrations.AddField(
             model_name='region',
             name='bbox_x0',
@@ -52,4 +53,5 @@ class Migration(migrations.Migration):
             name='srid',
             field=models.CharField(default=b'EPSG:4326', max_length=255),
         ),
+'''
     ]
